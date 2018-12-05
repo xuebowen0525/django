@@ -204,16 +204,10 @@ def search(request):
         return render(request,'blog/index.html',{'error_msg':error_msg})
     else:
         #icontains不区分大小写；contains区分大小写
-        post_list = Post.objects.filter(title__icontains=q)
-        paginator = Paginator(post_list,2)
-        page = request.GET.get('page')
-        try:
-            post_list  = paginator.page(page)
-        except PageNotAnInteger:
-            post_list  = paginator.page(1)
-        except EmptyPage:
-            post_list  = paginator.page(paginator.num_pages)
-        return render(request,'blog/index.html',{'post_list':post_list,'error_msg':error_msg})
+        #按title和tag筛选
+        #tag__name__icontains 外键 
+        post_list = Post.objects.filter(Q(title__icontains=q) | Q(tag__name__icontains=q))
+        return render(request,'blog/index.html',{'error_msg':error_msg,'post_list':post_list})
 
 
 
